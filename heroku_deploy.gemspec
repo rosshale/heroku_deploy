@@ -5,7 +5,7 @@
 
 Gem::Specification.new do |s|
   s.name = %q{heroku_deploy}
-  s.version = "0.0.0"
+  s.version = "0.0.1"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Ross Hale", "Chris Lemcke"]
@@ -16,11 +16,19 @@ Gem::Specification.new do |s|
     "README.markdown"
   ]
   s.files = [
+    ".gitignore",
+     ".idea/encodings.xml",
+     ".idea/heroku_deploy.iml",
+     ".idea/misc.xml",
+     ".idea/modules.xml",
+     ".idea/vcs.xml",
      "README.markdown",
      "Rakefile",
      "VERSION",
      "config/heroku_deploy.yml",
-     "lib/heroku_deploy.rake"
+     "heroku_deploy.gemspec",
+     "lib/heroku_deploy.rb",
+     "lib/tasks/heroku_deploy.rake"
   ]
   s.homepage = %q{http://github.com/lottay/heroku_deploy}
   s.rdoc_options = ["--charset=UTF-8"]
