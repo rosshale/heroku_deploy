@@ -16,11 +16,6 @@ Gem::Specification.new do |s|
     "README.markdown"
   ]
   s.files = [
-    ".idea/encodings.xml",
-     ".idea/heroku_deploy.iml",
-     ".idea/misc.xml",
-     ".idea/modules.xml",
-     ".idea/vcs.xml",
      "README.markdown",
      "Rakefile",
      "VERSION",
