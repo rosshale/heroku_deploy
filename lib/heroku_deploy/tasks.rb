@@ -1,13 +1,21 @@
 require 'rake'
 require 'rake/tasklib'
 
+class Rake::Application
+  attr_accessor :heroku_deploy_tasks
+
+  def heroku_deploy
+    heroku_deploy_tasks.heroku_deploy
+  end
+end
+
 class HerokuDeploy
 
   class Tasks < ::Rake::TaskLib
     attr_accessor :heroku_deploy
 
     def initialize
-      Rake.application.heroku_deploy = self
+      Rake.application.heroku_deploy_tasks = self
 
       define
     end
