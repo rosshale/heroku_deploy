@@ -1,1 +1,5 @@
-Dir["#{File.dirname(__FILE__)}/tasks/*.rake"].each { |ext| load ext }
+class HerokuDeploy
+  autoload :Tasks, 'heroku_deploy/tasks'
+end
+
+
