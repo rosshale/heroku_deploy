@@ -7,9 +7,7 @@ class HerokuDeploy
     attr_accessor :heroku_deploy
 
     def initialize
-      yield self if block_given?
-
-      self.heroku_deploy = Rake.application.heroku_deploy
+      Rake.application.heroku_deploy = self
 
       define
     end
