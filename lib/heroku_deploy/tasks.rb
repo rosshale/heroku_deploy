@@ -12,11 +12,14 @@ end
 class HerokuDeploy
 
   class Tasks < ::Rake::TaskLib
-    attr_accessor :heroku_deploy
+    attr_accessor :heroku_deploy, :staging_app, :production_app
 
-    def initialize
+    def initialize( options = {} )
       Rake.application.heroku_deploy_tasks = self
 
+      @staging_app = options.delete(:staging_app)
+      @production_app = options.delete(:production_app)
+      
       define
     end
 
@@ -24,25 +27,23 @@ class HerokuDeploy
       namespace :heroku_deploy do
         desc 'Setup branches and apps on heroku'
         task :setup => :environment do
-          puts "I AM THE SETUP TASK!!"
+
+          `git branch staging`
+          `git branch production`
+          `heroku app:create #{staging_app}`
+          `heroku app:create #{production_app}`
+
         end
 
         desc 'Deploy changes to staging'
         task :staging => :environment do
 
-          Rake::Task['deploy:backup:staging'].invoke
+          backup( staging_app )
 
           puts "Deploying to Staging"
-          puts "Merging staging with master"
+          merge( "master", "staging" )
 
-          `git checkout master`
-          `git pull origin master`
-          `git checkout staging`
-          `git pull origin staging`
-          `git merge master`
-          `git push origin staging`
-
-          heroku_deploy.push_to 'staging'
+          heroku_deploy.push_to 'staging', staging_app
           puts ""
           puts "Staging Deployed!"
           puts ""
@@ -51,19 +52,12 @@ class HerokuDeploy
         desc 'Deploy changes to production'
         task :production => :environment do
 
-          Rake::Task['deploy:backup:production'].invoke
+          backup( production_app )
 
           puts "Deploying to Production"
-          puts "Merging production with staging"
+          merge( "staging", "production" )
 
-          `git checkout staging`
-          `git pull origin staging`
-          `git checkout production`
-          `git pull origin production`
-          `git merge staging`
-          `git push origin production`
-
-          heroku_deploy.push_to 'production'
+          heroku_deploy.push_to 'production', production_app
 
           puts ""
           puts "Production Deployed!"
@@ -85,10 +79,18 @@ class HerokuDeploy
     end
   end
 
-  def push_to( branch )
+  def merge(from_branch, to_branch)
+    puts "Merging #{from_branch} with #{to_branch}"
 
-    app = "grouppay" if branch == "production"
-    app = "grouppay-staging" if branch == "staging"
+    `git checkout #{from_branch}`
+    `git pull origin #{from_branch}`
+    `git checkout #{to_branch}`
+    `git pull origin #{to_branch}`
+    `git merge #{from_branch}`
+    `git push origin #{to_branch}`
+  end
+
+  def push_to( branch, app )
 
     puts "Going into maintenance mode"
 

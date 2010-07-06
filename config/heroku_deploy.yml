@@ -1,6 +1,0 @@
-# An example of a heroku_deploy.yml
-staging:
-  app: an-app-on-heroku-staging
-
-production:
-  app: an-app-on-heroku

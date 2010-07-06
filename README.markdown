@@ -13,7 +13,7 @@ In environment.rb
 In your Rakefile:
     begin
       require 'heroku_deploy'
-      HerokuDeploy::Tasks.new
+      HerokuDeploy::Tasks.new( :staging_app => "example-app-staging", :production_app => "example-app")
     rescue LoadError
       puts "heroku_deploy (or a dependency) not available. Install it with: gem install heroku_deploy"
     end
