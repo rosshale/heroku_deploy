@@ -61,7 +61,7 @@ class HerokuDeploy
         desc 'Deploy changes to staging'
         task :staging => :environment do
 
-          backup( staging_app )
+          heroku_deploy.backup( staging_app )
 
           puts "Deploying to Staging"
           merge( "master", "staging" )
@@ -75,7 +75,7 @@ class HerokuDeploy
         desc 'Deploy changes to production'
         task :production => :environment do
 
-          backup( production_app )
+          heroku_deploy.backup( production_app )
 
           puts "Deploying to Production"
           merge( "staging", "production" )
