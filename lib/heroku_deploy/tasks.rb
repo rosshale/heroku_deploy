@@ -32,15 +32,13 @@ class HerokuDeploy
           puts "Creating staging branch"
           puts ""
           `git branch staging`
-          `git checkout staging`
-          `git push origin origin:refs/heads/staging`
+          `git push origin origin/master:refs/heads/staging`
 
           puts ""
           puts "Creating production branch"
           puts ""
           `git branch production`
-          `git checkout production`
-          `git push origin origin:refs/heads/production`
+          `git push origin origin/master:refs/heads/production`
 
           `git checkout master`
 
