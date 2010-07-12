@@ -19,6 +19,7 @@ class HerokuDeploy
 
       @staging_app = options.delete(:staging_app)
       @production_app = options.delete(:production_app)
+      @heroku_deploy = HerokuDeploy.new
       
       define
     end
@@ -46,11 +47,13 @@ class HerokuDeploy
           puts "Creating #{staging_app} Heroku app"
           puts ""
           `heroku app:create #{staging_app}`
+          `heroku addons:add bundles:single --app #{staging_app}`
 
           puts ""
           puts "Creating #{production_app} Heroku app"
           puts ""
           `heroku app:create #{production_app}`
+          `heroku addons:add bundles:single --app #{production_app}`
 
           puts ""
           puts "Setup Complete!"
@@ -90,12 +93,12 @@ class HerokuDeploy
         namespace :backup do
           desc 'Backup and download the staging code and database in a heroku bundle'
           task :staging => :environment do
-            heroku_deploy.backup "grouppay-staging"
+            heroku_deploy.backup staging_app
           end
 
           desc 'Backup and download the production code and database in a heroku bundle'
           task :production => :environment do
-            heroku_deploy.backup "grouppay"
+            heroku_deploy.backup production_app
           end
         end
 
@@ -150,19 +153,33 @@ class HerokuDeploy
     `heroku bundles:capture backup-#{timestamp} --app #{app}`
     puts "New Bundle Captured on Heroku: backup-#{timestamp}"
 
-    while !`heroku bundles --app #{app}`.include?("complete") do
+    puts "Waiting for Bundle to become available..."
+    while bundle_not_yet_captured?( app ) do
+      print "."
     end
 
-    puts "New Bundle Ready For Download"
+    if bundle_captured?( app )
+      puts "New Bundle Ready For Download"
 
-    `heroku bundles:download backup-#{timestamp} --app #{app}`
-    `mv #{app}.tar.gz #{app}-#{timestamp}.tar.gz`
+      `heroku bundles:download backup-#{timestamp} --app #{app}`
+      `mv #{app}.tar.gz #{app}-#{timestamp}.tar.gz`
 
-    puts "New Bundle Downloaded: #{app}-#{timestamp}.tar.gz"
-
+      puts "New Bundle Downloaded: #{app}-#{timestamp}.tar.gz"
+    end
+    
     puts "Backup Complete!"
     puts ""
 
+  end
+
+  protected
+
+  def bundle_not_yet_captured?( app )
+    `heroku bundles --app #{app}`.include?(" capturing ")
+  end
+
+  def bundle_captured?( app )
+    `heroku bundles --app #{app}`.include?(" complete ")
   end
 
 end
