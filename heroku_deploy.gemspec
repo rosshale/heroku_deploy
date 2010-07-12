@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{heroku_deploy}
-  s.version = "0.0.5"
+  s.version = "0.0.6"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Ross Hale", "Chris Lemcke"]
-  s.date = %q{2010-06-29}
+  s.date = %q{2010-07-12}
   s.description = %q{Deploy strategy and scripts for Heroku.}
   s.email = %q{rosshale@gmail.com}
   s.extra_rdoc_files = [
@@ -17,11 +17,9 @@ Gem::Specification.new do |s|
   ]
   s.files = [
     ".gitignore",
-     ".idea/dictionaries/rosshale.xml",
      "README.markdown",
      "Rakefile",
      "VERSION",
-     "config/heroku_deploy.yml",
      "heroku_deploy.gemspec",
      "lib/heroku_deploy.rb",
      "lib/heroku_deploy/tasks.rb",

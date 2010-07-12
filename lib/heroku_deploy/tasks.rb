@@ -28,10 +28,35 @@ class HerokuDeploy
         desc 'Setup branches and apps on heroku'
         task :setup => :environment do
 
+          puts ""
+          puts "Creating staging branch"
+          puts ""
           `git branch staging`
+          `git checkout staging`
+          `git push origin origin:refs/heads/staging`
+
+          puts ""
+          puts "Creating production branch"
+          puts ""
           `git branch production`
+          `git checkout production`
+          `git push origin origin:refs/heads/production`
+
+          `git checkout master`
+
+          puts ""
+          puts "Creating #{staging_app} Heroku app"
+          puts ""
           `heroku app:create #{staging_app}`
+
+          puts ""
+          puts "Creating #{production_app} Heroku app"
+          puts ""
           `heroku app:create #{production_app}`
+
+          puts ""
+          puts "Setup Complete!"
+          puts ""
 
         end
 
