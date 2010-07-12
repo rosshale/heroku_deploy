@@ -87,12 +87,13 @@ class HerokuDeploy
           puts ""
         end
 
-        desc 'Backup and download the code and database'
         namespace :backup do
+          desc 'Backup and download the staging code and database in a heroku bundle'
           task :staging => :environment do
             heroku_deploy.backup "grouppay-staging"
           end
 
+          desc 'Backup and download the production code and database in a heroku bundle'
           task :production => :environment do
             heroku_deploy.backup "grouppay"
           end
