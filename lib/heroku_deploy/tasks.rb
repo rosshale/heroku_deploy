@@ -80,12 +80,16 @@ class HerokuDeploy
     puts "Creating #{staging_app} Heroku app"
     puts ""
     `heroku app:create #{staging_app}`
+    `heroku config:add RACK_ENV=staging --app #{staging_app}`
+    `git remote rm heroku`
     `heroku addons:add bundles:single --app #{staging_app}`
 
     puts ""
     puts "Creating #{production_app} Heroku app"
     puts ""
     `heroku app:create #{production_app}`
+    `heroku config:add RACK_ENV=production --app #{production_app}`
+    `git remote rm heroku`
     `heroku addons:add bundles:single --app #{production_app}`
 
     puts ""
@@ -175,11 +179,12 @@ class HerokuDeploy
     `heroku bundles:capture backup-#{timestamp} --app #{app}`
     puts "New Bundle Captured on Heroku: backup-#{timestamp}"
 
-    puts "Waiting for Bundle to become available..."
+    print "Waiting for Bundle to become available..."
     while bundle_not_yet_captured?( app ) do
       print "."
     end
-
+    puts ""
+    
     if bundle_captured?( app )
       puts "New Bundle Ready For Download"
 
