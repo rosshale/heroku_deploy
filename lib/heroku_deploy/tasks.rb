@@ -10,17 +10,22 @@ class Rake::Application
 end
 
 class HerokuDeploy
+  attr_accessor :staging_app, :production_app
+
+  def initialize( options = {} )
+    @staging_app = options.delete(:staging_app)
+    @production_app = options.delete(:production_app)
+  end
 
   class Tasks < ::Rake::TaskLib
-    attr_accessor :heroku_deploy, :staging_app, :production_app
+    attr_accessor :heroku_deploy
 
     def initialize( options = {} )
       Rake.application.heroku_deploy_tasks = self
 
-      @staging_app = options.delete(:staging_app)
-      @production_app = options.delete(:production_app)
-      @heroku_deploy = HerokuDeploy.new
-      
+      @heroku_deploy = HerokuDeploy.new( :staging_app => options.delete(:staging_app),
+                                         :production_app => options.delete(:production_app))
+
       define
     end
 
@@ -28,72 +33,23 @@ class HerokuDeploy
       namespace :heroku_deploy do
         desc 'Setup branches and apps on heroku'
         task :setup => :environment do
-
-          puts ""
-          puts "Creating staging branch"
-          puts ""
-          `git branch staging`
-          `git push origin origin/master:refs/heads/staging`
-
-          puts ""
-          puts "Creating production branch"
-          puts ""
-          `git branch production`
-          `git push origin origin/master:refs/heads/production`
-
-          `git checkout master`
-
-          puts ""
-          puts "Creating #{staging_app} Heroku app"
-          puts ""
-          `heroku app:create #{staging_app}`
-          `heroku addons:add bundles:single --app #{staging_app}`
-
-          puts ""
-          puts "Creating #{production_app} Heroku app"
-          puts ""
-          `heroku app:create #{production_app}`
-          `heroku addons:add bundles:single --app #{production_app}`
-
-          puts ""
-          puts "Setup Complete!"
-          puts ""
-
+          heroku_deploy.setup
         end
 
         desc 'Deploy changes to staging'
         task :staging => :environment do
-
-          heroku_deploy.backup( staging_app )
-
-          puts "Deploying to Staging"
-          merge( "master", "staging" )
-
-          heroku_deploy.push_to 'staging', staging_app
-          puts ""
-          puts "Staging Deployed!"
-          puts ""
+          heroku_deploy.staging
         end
 
         desc 'Deploy changes to production'
         task :production => :environment do
-
-          heroku_deploy.backup( production_app )
-
-          puts "Deploying to Production"
-          merge( "staging", "production" )
-
-          heroku_deploy.push_to 'production', production_app
-
-          puts ""
-          puts "Production Deployed!"
-          puts ""
+          heroku_deploy.production
         end
 
         namespace :backup do
           desc 'Backup and download the staging code and database in a heroku bundle'
           task :staging => :environment do
-            heroku_deploy.backup staging_app
+            heroku_deploy.backup_staging
           end
 
           desc 'Backup and download the production code and database in a heroku bundle'
@@ -101,10 +57,76 @@ class HerokuDeploy
             heroku_deploy.backup production_app
           end
         end
-
       end
     end
   end
+
+  def setup
+    puts ""
+    puts "Creating staging branch"
+    puts ""
+    `git branch staging`
+    `git push origin origin/master:refs/heads/staging`
+
+    puts ""
+    puts "Creating production branch"
+    puts ""
+    `git branch production`
+    `git push origin origin/master:refs/heads/production`
+
+    `git checkout master`
+
+    puts ""
+    puts "Creating #{staging_app} Heroku app"
+    puts ""
+    `heroku app:create #{staging_app}`
+    `heroku addons:add bundles:single --app #{staging_app}`
+
+    puts ""
+    puts "Creating #{production_app} Heroku app"
+    puts ""
+    `heroku app:create #{production_app}`
+    `heroku addons:add bundles:single --app #{production_app}`
+
+    puts ""
+    puts "Setup Complete!"
+    puts ""
+  end
+
+  def staging
+    backup staging_app
+
+    puts "Deploying to Staging"
+    merge "master", "staging"
+
+    push_to 'staging', staging_app
+    puts ""
+    puts "Staging Deployed!"
+    puts ""
+  end
+
+  def production
+    backup production_app
+
+    puts "Deploying to Production"
+    merge "staging", "production"
+
+    push_to 'production', production_app
+
+    puts ""
+    puts "Production Deployed!"
+    puts ""
+  end
+
+  def backup_staging
+    backup staging_app
+  end
+
+  def backup_production
+    backup production_app
+  end
+
+  private
 
   def merge(from_branch, to_branch)
     puts "Merging #{from_branch} with #{to_branch}"
@@ -145,7 +167,7 @@ class HerokuDeploy
   def backup( app )
     puts ""
     puts "Beginning Backup"
-    timestamp = Time.now.to_s(:number)
+    timestamp = Time.now.strftime("%Y%m%d%H%M%S")
     old_bundle = `heroku bundles --app #{app}`.split.first
 
     `heroku bundles:destroy #{old_bundle} --app #{app}`
@@ -166,13 +188,11 @@ class HerokuDeploy
 
       puts "New Bundle Downloaded: #{app}-#{timestamp}.tar.gz"
     end
-    
+
     puts "Backup Complete!"
     puts ""
 
   end
-
-  protected
 
   def bundle_not_yet_captured?( app )
     `heroku bundles --app #{app}`.include?(" capturing ")
@@ -181,5 +201,7 @@ class HerokuDeploy
   def bundle_captured?( app )
     `heroku bundles --app #{app}`.include?(" complete ")
   end
+
+  
 
 end
