@@ -1,6 +1,6 @@
 # heroku_deploy
 This gem is an easy way to quickly setup and
-deploy staging and production environments for
+deploy staging and production branches and environments for
 your project on heroku.
 
 ###Installation Instructions
@@ -47,4 +47,6 @@ or
 
     rake heroku_deploy:backup:production
 
-
+###Coming Soon
+* Before and after hooks that allow you to arbitrarily execute code before and after deploy
+* a --nobackup option that skips the backup when deploying to production or staging
