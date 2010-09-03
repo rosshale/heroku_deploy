@@ -149,6 +149,14 @@ class HerokuDeploy
 
     `heroku maintenance:on --app #{app}`
 
+    puts "Waiting for slug to re-compile..."
+    30.times do
+      sleep 1
+      print "."
+      STDOUT.flush
+    end
+    puts ""
+    
     puts "Pushing to #{app}"
 
     `git push git@heroku.com:#{app}.git #{branch}:master`
@@ -182,6 +190,7 @@ class HerokuDeploy
     print "Waiting for Bundle to become available..."
     while bundle_not_yet_captured?( app ) do
       print "."
+      STDOUT.flush
     end
     puts ""
     
