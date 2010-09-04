@@ -150,7 +150,7 @@ class HerokuDeploy
     `heroku maintenance:on --app #{app}`
 
     puts "Waiting for slug to re-compile..."
-    30.times do
+    60.times do
       sleep 1
       print "."
       STDOUT.flush
