@@ -209,6 +209,8 @@ class HerokuDeploy
     response_code = 200
     while (response_code != 422)
       response_code = HTTParty.get("http://#{app}.heroku.com").code
+      print "."
+      STDOUT.flush
     end
   end
 
