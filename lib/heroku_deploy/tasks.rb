@@ -150,11 +150,7 @@ class HerokuDeploy
     `heroku maintenance:on --app #{app}`
 
     puts "Waiting for slug to re-compile..."
-    60.times do
-      sleep 1
-      print "."
-      STDOUT.flush
-    end
+    wait_for_maintenance_page( app )
     puts ""
     
     puts "Pushing to #{app}"
@@ -176,6 +172,7 @@ class HerokuDeploy
 
   end
 
+
   def backup( app )
     puts ""
     puts "Beginning Backup"
@@ -193,7 +190,7 @@ class HerokuDeploy
       STDOUT.flush
     end
     puts ""
-    
+
     if bundle_captured?( app )
       puts "New Bundle Ready For Download"
 
@@ -206,6 +203,13 @@ class HerokuDeploy
     puts "Backup Complete!"
     puts ""
 
+  end
+
+  def wait_for_maintenance_page(app)
+    response_code = 200
+    while (response_code != 422)
+      response_code = HTTParty.get("http://#{app}.heroku.com").code
+    end
   end
 
   def bundle_not_yet_captured?( app )
