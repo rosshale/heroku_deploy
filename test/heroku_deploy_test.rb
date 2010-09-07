@@ -40,20 +40,40 @@ class HerokuDeployTest < Test::Unit::TestCase
         @heroku_deploy.setup
       end
 
-      should "invoke staging" do
-        @heroku_deploy.staging
-      end
-
-      should "invoke production" do
-        @heroku_deploy.production
-      end
-
       should "invoke backup_staging" do
         @heroku_deploy.backup_staging
       end
 
       should "invoke backup_production" do
         @heroku_deploy.backup_production
+      end
+
+      context "with backup" do
+
+        should "invoke staging and backup" do
+          mock.proxy(@heroku_deploy).backup("example-staging")
+          @heroku_deploy.staging
+        end
+
+        should "invoke production and backup" do
+          mock.proxy(@heroku_deploy).backup("example")
+          @heroku_deploy.production
+        end
+      end
+
+      context "without backup" do
+
+        should "invoke staging and skip backup" do
+          ENV['BACKUP'] = "false"
+          dont_allow(@heroku_deploy).backup("example-staging")
+          @heroku_deploy.staging
+        end
+
+        should "invoke production and skip backup" do
+          ENV['backup'] = "false"
+          dont_allow(@heroku_deploy).backup("example")
+          @heroku_deploy.production
+        end
       end
 
     end

@@ -98,7 +98,7 @@ class HerokuDeploy
   end
 
   def staging
-    backup staging_app
+    backup staging_app unless no_backup
 
     puts "Deploying to Staging"
     merge "master", "staging"
@@ -110,7 +110,7 @@ class HerokuDeploy
   end
 
   def production
-    backup production_app
+    backup production_app unless no_backup
 
     puts "Deploying to Production"
     merge "staging", "production"
@@ -149,7 +149,7 @@ class HerokuDeploy
 
     `heroku maintenance:on --app #{app}`
 
-    puts "Waiting for slug to re-compile..."
+    print "Waiting for slug to re-compile..."
     wait_for_maintenance_page( app )
     puts ""
     
@@ -171,7 +171,6 @@ class HerokuDeploy
     `heroku maintenance:off --app #{app}`
 
   end
-
 
   def backup( app )
     puts ""
@@ -222,6 +221,8 @@ class HerokuDeploy
     `heroku bundles --app #{app}`.include?(" complete ")
   end
 
-  
+  def no_backup
+    ENV['BACKUP'] == "false" || ENV['backup'] == "false"
+  end
 
 end

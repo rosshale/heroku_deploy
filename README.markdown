@@ -47,6 +47,9 @@ or
 
     rake heroku_deploy:backup:production
 
+To skip the backup when deploying to staging or production run:
+
+    rake heroku_deploy:staging backup=false
+
 ###Coming Soon
 * Before and after hooks that allow you to arbitrarily execute code before and after deploy
-* a --nobackup option that skips the backup when deploying to production or staging
