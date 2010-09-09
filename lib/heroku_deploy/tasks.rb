@@ -79,7 +79,7 @@ class HerokuDeploy
     puts ""
     puts "Creating #{staging_app} Heroku app"
     puts ""
-    `heroku app:create #{staging_app}`
+    `heroku create #{staging_app}`
     `heroku config:add RACK_ENV=staging --app #{staging_app}`
     `git remote rm heroku`
     `heroku addons:add bundles:single --app #{staging_app}`
@@ -87,7 +87,7 @@ class HerokuDeploy
     puts ""
     puts "Creating #{production_app} Heroku app"
     puts ""
-    `heroku app:create #{production_app}`
+    `heroku create #{production_app}`
     `heroku config:add RACK_ENV=production --app #{production_app}`
     `git remote rm heroku`
     `heroku addons:add bundles:single --app #{production_app}`

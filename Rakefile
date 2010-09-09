@@ -10,9 +10,9 @@ begin
     gem.description = %Q{Deploy strategy and scripts for Heroku.}
     gem.email = "rosshale@gmail.com"
     gem.homepage = "http://github.com/lottay/heroku_deploy"
-    gem.authors = ["Ross Hale", "Chris Lemcke"]
-    gem.add_development_dependency "heroku", ">= 0"
-    gem.add_development_dependency "httparty", ">= 0"
+    gem.authors = ["Ross Hale"]
+    gem.add_development_dependency "heroku", ">= 1.10.2"
+    gem.add_development_dependency "httparty", ">= 0.6.1"
     # gem is a Gem::Specification... see http://www.rubygems.org/read/chapter/20 for additional settings
   end
   Jeweler::GemcutterTasks.new
