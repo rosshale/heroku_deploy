@@ -2,6 +2,7 @@ require 'test/unit'
 require 'rubygems'
 
 require 'rake'
+require 'httparty'
 require 'shoulda'
 require 'rr'
 $LOAD_PATH.unshift(File.dirname(__FILE__) + '/../lib')

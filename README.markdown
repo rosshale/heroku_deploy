@@ -10,6 +10,10 @@ Install the gem:
 In environment.rb
     config.gem "heroku_deploy"
 
+or in your Gemfile
+    gem "heroku_deploy"
+    gem "heroku"
+
 In your Rakefile:
     begin
       require 'heroku_deploy'
@@ -21,7 +25,8 @@ In your Rakefile:
     end
 
 ###Setup and Deploy
-heroku_deploy assumes that origin/master is your main development branch.  Once you have that in place, run:
+heroku_deploy assumes that origin/master is your main development branch.  It also assumes your heroku credentials are saved in ~/.heroku/credentials
+Once you have that in place, run:
 
     rake heroku_deploy:setup
 
@@ -52,4 +57,7 @@ To skip the backup when deploying to staging or production run:
     rake heroku_deploy:staging backup=false
 
 ###Coming Soon
+* Prompts for credentials if you haven't entered them
+* No need to include gem "heroku" in your Gemfile
+* Better error messages if you're trying to create an existing heroku app
 * Before and after hooks that allow you to arbitrarily execute code before and after deploy

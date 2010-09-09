@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{heroku_deploy}
-  s.version = "0.1.5"
+  s.version = "0.1.7"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
-  s.authors = ["Ross Hale", "Chris Lemcke"]
-  s.date = %q{2010-09-07}
+  s.authors = ["Ross Hale"]
+  s.date = %q{2010-09-09}
   s.description = %q{Deploy strategy and scripts for Heroku.}
   s.email = %q{rosshale@gmail.com}
   s.extra_rdoc_files = [
@@ -17,6 +17,8 @@ Gem::Specification.new do |s|
   ]
   s.files = [
     ".gitignore",
+     "Gemfile",
+     "Gemfile.lock",
      "README.markdown",
      "Rakefile",
      "VERSION",
@@ -41,15 +43,9 @@ Gem::Specification.new do |s|
     s.specification_version = 3
 
     if Gem::Version.new(Gem::VERSION) >= Gem::Version.new('1.2.0') then
-      s.add_development_dependency(%q<heroku>, [">= 0"])
-      s.add_development_dependency(%q<httparty>, [">= 0"])
     else
-      s.add_dependency(%q<heroku>, [">= 0"])
-      s.add_dependency(%q<httparty>, [">= 0"])
     end
   else
-    s.add_dependency(%q<heroku>, [">= 0"])
-    s.add_dependency(%q<httparty>, [">= 0"])
   end
 end
 

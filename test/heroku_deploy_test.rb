@@ -48,6 +48,10 @@ class HerokuDeployTest < Test::Unit::TestCase
         @heroku_deploy.backup_production
       end
 
+      should "have access to httparty" do
+        assert HTTParty
+      end
+
       context "with backup" do
 
         should "invoke staging and backup" do
