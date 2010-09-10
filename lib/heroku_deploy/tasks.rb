@@ -150,7 +150,7 @@ class HerokuDeploy
     `heroku maintenance:on --app #{app}`
 
     print "Waiting for slug to re-compile..."
-    wait_for_maintenance_page( app )
+    wait_for_maintenance_on( app )
     puts ""
     
     puts "Pushing to #{app}"
@@ -170,6 +170,9 @@ class HerokuDeploy
 
     `heroku maintenance:off --app #{app}`
 
+    print "Waiting for app to go live..."
+    wait_for_maintenance_off(app)
+    puts ""
   end
 
   def backup( app )
@@ -204,10 +207,23 @@ class HerokuDeploy
 
   end
 
-  def wait_for_maintenance_page(app)
-    response_code = 200
-    while (response_code != 422)
-      response_code = HTTParty.get("http://#{app}.heroku.com").code
+  def maintenance_off(app)
+    HTTParty.get("http://#{app}.heroku.com").code != 422
+  end
+
+  def wait_for_maintenance_on(app)
+    while (maintenance_off(app))
+      print "."
+      STDOUT.flush
+    end
+  end
+
+  def maintenance_on(app)
+    HTTParty.get("http://#{app}.heroku.com").code != 200
+  end
+
+  def wait_for_maintenance_off(app)
+    while (maintenance_on(app))
       print "."
       STDOUT.flush
     end

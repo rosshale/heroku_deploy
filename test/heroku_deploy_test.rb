@@ -25,7 +25,8 @@ class HerokuDeployTest < Test::Unit::TestCase
         stub(@heroku_deploy).puts
         stub(@heroku_deploy).bundle_not_yet_captured? { false }
         stub(@heroku_deploy).bundle_captured? { true }
-        stub.any_instance_of(HTTParty::Response).code { 422 }
+        stub(@heroku_deploy).maintenance_off { false }
+        stub(@heroku_deploy).maintenance_on { false }
       end
 
       should "assign staging_app" do
