@@ -54,7 +54,7 @@ class HerokuDeploy
 
           desc 'Backup and download the production code and database in a heroku bundle'
           task :production => :environment do
-            heroku_deploy.backup production_app
+            heroku_deploy.backup_production
           end
         end
       end
