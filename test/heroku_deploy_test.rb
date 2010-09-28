@@ -81,6 +81,22 @@ class HerokuDeployTest < Test::Unit::TestCase
         end
       end
 
+      context "without maintenance mode" do
+        should "invoke staging and skip maintenance" do
+          ENV['MAINTENANCE'] = "false"
+          dont_allow(@heroku_deploy).go_into_maintenance("example-staging")
+          dont_allow(@heroku_deploy).get_out_of_maintenance("example-staging")
+          @heroku_deploy.staging
+        end
+
+        should "invoke production and skip backup" do
+          ENV['maintenance'] = "false"
+          dont_allow(@heroku_deploy).go_into_maintenance("example")
+          dont_allow(@heroku_deploy).get_out_of_maintenance("example")
+          @heroku_deploy.production
+        end
+      end
+
     end
 
   end

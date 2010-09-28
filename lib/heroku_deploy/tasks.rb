@@ -145,13 +145,7 @@ class HerokuDeploy
 
   def push_to( branch, app )
 
-    puts "Going into maintenance mode"
-
-    `heroku maintenance:on --app #{app}`
-
-    print "Waiting for slug to re-compile..."
-    wait_for_maintenance_on( app )
-    puts ""
+    go_into_maintenance(app) unless no_maintenance
     
     puts "Pushing to #{app}"
 
@@ -166,12 +160,10 @@ class HerokuDeploy
 
     `heroku restart --app #{app}`
 
-    puts "Getting out of maintenance mode"
-
-    `heroku maintenance:off --app #{app}`
+    get_out_of_maintenance(app) unless no_maintenance
 
     print "Waiting for app to go live..."
-    wait_for_maintenance_off(app)
+    wait_for_app_to_go_up(app)
     puts ""
   end
 
@@ -207,6 +199,22 @@ class HerokuDeploy
 
   end
 
+  def go_into_maintenance(app)
+    puts "Going into maintenance mode"
+
+    `heroku maintenance:on --app #{app}`
+
+    print "Waiting for slug to re-compile..."
+    wait_for_maintenance_on( app )
+    puts ""
+  end
+
+  def get_out_of_maintenance(app)
+    puts "Getting out of maintenance mode"
+    `heroku maintenance:off --app #{app}`
+  end
+
+
   def maintenance_off(app)
     HTTParty.get("http://#{app}.heroku.com").code != 422
   end
@@ -222,7 +230,7 @@ class HerokuDeploy
     HTTParty.get("http://#{app}.heroku.com").code != 200
   end
 
-  def wait_for_maintenance_off(app)
+  def wait_for_app_to_go_up(app)
     while (maintenance_on(app))
       print "."
       STDOUT.flush
@@ -239,6 +247,10 @@ class HerokuDeploy
 
   def no_backup
     ENV['BACKUP'] == "false" || ENV['backup'] == "false"
+  end
+
+  def no_maintenance
+    ENV['MAINTENANCE'] == "false" || ENV['maintenance'] == "false"
   end
 
 end
