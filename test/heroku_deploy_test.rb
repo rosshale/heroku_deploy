@@ -53,17 +53,22 @@ class HerokuDeployTest < Test::Unit::TestCase
         assert HTTParty
       end
 
-      context "with backup" do
+      should "invoke staging and friends" do
+        mock.proxy(@heroku_deploy).before_staging_deploy
+        mock.proxy(@heroku_deploy).after_staging_deploy
+        mock.proxy(@heroku_deploy).go_into_maintenance("example-staging")
+        mock.proxy(@heroku_deploy).get_out_of_maintenance("example-staging")
+        mock.proxy(@heroku_deploy).backup("example-staging")
+        @heroku_deploy.staging
+      end
 
-        should "invoke staging and backup" do
-          mock.proxy(@heroku_deploy).backup("example-staging")
-          @heroku_deploy.staging
-        end
-
-        should "invoke production and backup" do
-          mock.proxy(@heroku_deploy).backup("example")
-          @heroku_deploy.production
-        end
+      should "invoke production and friends" do
+        mock.proxy(@heroku_deploy).before_production_deploy
+        mock.proxy(@heroku_deploy).after_production_deploy
+        mock.proxy(@heroku_deploy).go_into_maintenance("example")
+        mock.proxy(@heroku_deploy).get_out_of_maintenance("example")
+        mock.proxy(@heroku_deploy).backup("example")
+        @heroku_deploy.production
       end
 
       context "without backup" do

@@ -52,12 +52,31 @@ or
 
     rake heroku_deploy:backup:production
 
-To skip the backup when deploying to staging or production run:
+To skip the backup when deploying to staging or production run set backup=false:
 
     rake heroku_deploy:staging backup=false
 
+To skip maintenance mode set maintenance=false:
+
+    rake heroku_deploy:production maintenance=false
+
+You can also define before and after hooks either in your environment or an intializer or pretty much anywhere that gets loaded:
+
+    class HerokuDeploy
+
+      def before_staging_deploy
+        `rake asset:packager:build_all`
+      end
+
+      def after_production_deploy
+        `script/move_latest_backup_to_nas`
+      end
+
+    end
+
 ###Coming Soon
+* Rails 3 compatibility
 * Prompts for credentials if you haven't entered them
 * No need to include gem "heroku" in your Gemfile
 * Better error messages if you're trying to create an existing heroku app
-* Before and after hooks that allow you to arbitrarily execute code before and after deploy
+

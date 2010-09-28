@@ -98,6 +98,7 @@ class HerokuDeploy
   end
 
   def staging
+    before_staging_deploy
     backup staging_app unless no_backup
 
     puts "Deploying to Staging"
@@ -107,9 +108,11 @@ class HerokuDeploy
     puts ""
     puts "Staging Deployed!"
     puts ""
+    after_staging_deploy
   end
 
   def production
+    before_production_deploy
     backup production_app unless no_backup
 
     puts "Deploying to Production"
@@ -120,6 +123,7 @@ class HerokuDeploy
     puts ""
     puts "Production Deployed!"
     puts ""
+    after_production_deploy
   end
 
   def backup_staging
@@ -251,6 +255,22 @@ class HerokuDeploy
 
   def no_maintenance
     ENV['MAINTENANCE'] == "false" || ENV['maintenance'] == "false"
+  end
+
+  def before_staging_deploy
+    # override this yourself wherever you like.  An initializer is a good place.
+  end
+
+  def after_staging_deploy
+    # override this yourself wherever you like.  An initializer is a good place.
+  end
+
+  def before_production_deploy
+    # override this yourself wherever you like.  An initializer is a good place.
+  end
+
+  def after_production_deploy
+    # override this yourself wherever you like.  An initializer is a good place.
   end
 
 end
